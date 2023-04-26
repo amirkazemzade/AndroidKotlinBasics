@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">NikeShoeStoreComposeNew</string>
+    <string name="login">Login</string>
+    <string name="auth_helper_text">Please enter your email and password</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="have_account_question">Already have an account?</string>
+    <string name="do_not_have_account_question">Don\'t have an account?</string>
+    <string name="profile">Profile</string>
+    <string name="favoriet_list">Favorite List</string>
+    <string name="order_history">Order History</string>
+    <string name="log_out">Log Out</string>
+</resources>

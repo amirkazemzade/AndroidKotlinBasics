@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">فروشگاه کفش نایکی</string>
+    <string name="login">ورود</string>
+    <string name="auth_helper_text">لطفا ایمیل و رمز عبور خود را وارد کنید</string>
+    <string name="email">ایمیل</string>
+    <string name="password">رمزعبور</string>
+    <string name="sign_up">ثبت نام</string>
+    <string name="have_account_question">حساب کاربری دارید؟</string>
+    <string name="do_not_have_account_question">حساب کاربری ندارید؟</string>
+    <string name="profile">پروفایل</string>
+    <string name="favoriet_list">لیست علاقه مندی ها</string>
+    <string name="order_history">سوابق سفارش</string>
+    <string name="log_out">خروج از حساب کاربری</string>
+</resources>
