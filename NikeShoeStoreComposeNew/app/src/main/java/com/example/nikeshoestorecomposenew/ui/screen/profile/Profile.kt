@@ -1,4 +1,4 @@
-package com.example.nikeshoestorecomposenew.screen.profile
+package com.example.nikeshoestorecomposenew.ui.screen.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

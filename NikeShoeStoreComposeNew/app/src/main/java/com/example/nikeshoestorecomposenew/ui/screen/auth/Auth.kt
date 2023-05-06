@@ -1,5 +1,6 @@
-package com.example.nikeshoestorecomposenew.screen.auth
+package com.example.nikeshoestorecomposenew.ui.screen.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,11 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,16 +40,46 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.nikeshoestorecomposenew.R
-import com.example.nikeshoestorecomposenew.navigation.AppDestinations
+import com.example.nikeshoestorecomposenew.ui.navigation.AppDestinations
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Auth(
     navController: NavHostController = rememberNavController(),
     viewModel: AuthViewModel = viewModel()
 ) {
+    val signUpState = viewModel.signUpState.value
+    val loginState = viewModel.loginState.value
+    val context = LocalContext.current
+
+    SideEffect {
+        if (signUpState is SignUpState.Error) {
+            Toast.makeText(context, signUpState.message, Toast.LENGTH_SHORT).show()
+        } else if (signUpState is SignUpState.Success) {
+            navController.navigate(AppDestinations.profile)
+        }
+        if (loginState is LoginState.Error) {
+            Toast.makeText(context, loginState.message, Toast.LENGTH_SHORT).show()
+        } else if (loginState is LoginState.Success) {
+            navController.navigate(AppDestinations.profile)
+        }
+    }
+
+    if (viewModel.signUpState.value == SignUpState.Loading ||
+        viewModel.loginState.value == LoginState.Loading
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Body(viewModel)
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun Body(viewModel: AuthViewModel) {
     Scaffold {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,12 +102,9 @@ fun Auth(
             PasswordTextField(viewModel)
             Box(modifier = Modifier.height(40.dp))
             Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    // TODO: login with api
-                    navController.navigate(AppDestinations.profile)
-                },
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.fillMaxWidth(), onClick = {
+                    viewModel.auth()
+                }, shape = RoundedCornerShape(16.dp)
             ) {
                 Text(text = actionText(viewModel.authType.value))
             }
@@ -89,9 +120,8 @@ fun Auth(
 }
 
 @Composable
-private fun actionText(type: AuthType) =
-    if (type == AuthType.Login) stringResource(R.string.login)
-    else stringResource(R.string.sign_up)
+private fun actionText(type: AuthType) = if (type == AuthType.Login) stringResource(R.string.login)
+else stringResource(R.string.sign_up)
 
 @Composable
 private fun otherActionText(type: AuthType) =
@@ -99,10 +129,8 @@ private fun otherActionText(type: AuthType) =
 
 @Composable
 private fun otherActionHelperText(type: AuthType) =
-    if (type != AuthType.SignUp)
-        stringResource(id = R.string.do_not_have_account_question)
-    else
-        stringResource(id = R.string.have_account_question)
+    if (type != AuthType.SignUp) stringResource(id = R.string.do_not_have_account_question)
+    else stringResource(id = R.string.have_account_question)
 
 
 @Composable
