@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import com.example.nikeshoestorecomposenew.navigation.AppNavHost
+import com.example.nikeshoestorecomposenew.ui.navigation.AppNavHost
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 class MainActivity : ComponentActivity() {
