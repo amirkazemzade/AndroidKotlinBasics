@@ -1,5 +1,6 @@
 package com.example.nikeshoestorecomposenew.ui.screen.auth
 
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.nikeshoestorecomposenew.data.model.error.ErrorResponse
 import com.example.nikeshoestorecomposenew.data.model.request.LoginRequest
 import com.example.nikeshoestorecomposenew.data.model.request.SignUpRequest
+import com.example.nikeshoestorecomposenew.data.service.DataStoreService
 import com.example.nikeshoestorecomposenew.data.service.createApiService
 import com.example.nikeshoestorecomposenew.data.service.createMoshi
 import kotlinx.coroutines.launch
@@ -14,11 +16,8 @@ import kotlinx.coroutines.launch
 class AuthViewModel : ViewModel() {
     private val _apiService = createApiService()
 
-    private val _signUpState = mutableStateOf<SignUpState>(SignUpState.Initial)
-    val signUpState: State<SignUpState> = _signUpState
-
-    private val _loginState = mutableStateOf<LoginState>(LoginState.Initial)
-    val loginState: State<LoginState> = _loginState
+    private val _authState = mutableStateOf<AuthState>(AuthState.Initial)
+    val authState: State<AuthState> = _authState
 
     private val _email = mutableStateOf("")
     val email: State<String> = _email
@@ -45,41 +44,46 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    private fun signUp() {
+    private fun signUp(context: Context) {
         viewModelScope.launch {
-            _signUpState.value = SignUpState.Loading
+            _authState.value = AuthState.Loading
             val response = _apiService.signUp(SignUpRequest(email.value, password.value))
             if (response.isSuccessful) {
-                _signUpState.value = SignUpState.Success(response.body()!!)
+                _authState.value = AuthState.SignUpSuccess(response.body()!!)
+                login(context)
             } else {
                 val moshi = createMoshi()
                 val adapter = moshi.adapter(ErrorResponse::class.java)
                 val errorResponse = adapter.fromJson(response.errorBody()!!.string())
-                _signUpState.value = SignUpState.Error(errorResponse!!.message)
+                _authState.value = AuthState.Error(errorResponse!!.message)
             }
         }
     }
 
-    private fun login() {
+    private fun login(context: Context) {
         viewModelScope.launch {
-            _loginState.value = LoginState.Loading
+            _authState.value = AuthState.Loading
             val response = _apiService.login(LoginRequest(email.value, password.value))
             if (response.isSuccessful) {
-                _loginState.value = LoginState.Success(response.body()!!)
+                val dataStoreService = DataStoreService(context)
+                val loginResponse = response.body()!!
+                _authState.value = AuthState.LoginSuccess(loginResponse)
+                dataStoreService.setUserToken(loginResponse.access_token)
+                dataStoreService.setUserEmail(email.value)
             } else {
                 val moshi = createMoshi()
                 val adapter = moshi.adapter(ErrorResponse::class.java)
                 val errorResponse = adapter.fromJson(response.errorBody()!!.string())
-                _loginState.value = LoginState.Error(errorResponse!!.message)
+                _authState.value = AuthState.Error(errorResponse!!.message)
             }
         }
     }
 
-    fun auth() {
+    fun auth(context: Context) {
         if (authType.value == AuthType.Login) {
-            login()
+            login(context)
         } else {
-            signUp()
+            signUp(context)
         }
     }
 }
