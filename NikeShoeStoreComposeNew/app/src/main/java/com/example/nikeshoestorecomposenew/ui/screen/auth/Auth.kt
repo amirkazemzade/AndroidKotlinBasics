@@ -16,12 +16,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,28 +47,20 @@ import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 @Composable
 fun Auth(
     navController: NavHostController = rememberNavController(),
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(),
 ) {
-    val signUpState = viewModel.signUpState.value
-    val loginState = viewModel.loginState.value
+    val authState = viewModel.authState.value
     val context = LocalContext.current
 
-    SideEffect {
-        if (signUpState is SignUpState.Error) {
-            Toast.makeText(context, signUpState.message, Toast.LENGTH_SHORT).show()
-        } else if (signUpState is SignUpState.Success) {
-            navController.navigate(AppDestinations.profile)
-        }
-        if (loginState is LoginState.Error) {
-            Toast.makeText(context, loginState.message, Toast.LENGTH_SHORT).show()
-        } else if (loginState is LoginState.Success) {
-            navController.navigate(AppDestinations.profile)
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Error) {
+            Toast.makeText(context, authState.message, Toast.LENGTH_SHORT).show()
+        } else if (authState is AuthState.LoginSuccess) {
+            navController.navigate(AppDestinations.mainPage)
         }
     }
 
-    if (viewModel.signUpState.value == SignUpState.Loading ||
-        viewModel.loginState.value == LoginState.Loading
-    ) {
+    if (authState == AuthState.Loading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
@@ -77,9 +69,11 @@ fun Auth(
     }
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 private fun Body(viewModel: AuthViewModel) {
+    val context = LocalContext.current
+
     Scaffold {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,7 +97,7 @@ private fun Body(viewModel: AuthViewModel) {
             Box(modifier = Modifier.height(40.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(), onClick = {
-                    viewModel.auth()
+                    viewModel.auth(context)
                 }, shape = RoundedCornerShape(16.dp)
             ) {
                 Text(text = actionText(viewModel.authType.value))
@@ -168,8 +162,10 @@ private fun PasswordTextField(viewModel: AuthViewModel) {
         visualTransformation = if (showPassword.value) VisualTransformation.None
         else PasswordVisualTransformation(),
         shape = RoundedCornerShape(20.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
         )
@@ -194,8 +190,10 @@ private fun EmailTextField(viewModel: AuthViewModel) {
             )
         },
         shape = RoundedCornerShape(20.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
         )

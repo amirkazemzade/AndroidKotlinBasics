@@ -2,7 +2,9 @@ package com.example.nikeshoestorecomposenew.data.service
 
 import android.annotation.SuppressLint
 import com.example.nikeshoestorecomposenew.BASE_URL
+import com.example.nikeshoestorecomposenew.data.model.reponse.BannerResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.LoginResponse
+import com.example.nikeshoestorecomposenew.data.model.reponse.ShoeResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.SignUpResponse
 import com.example.nikeshoestorecomposenew.data.model.request.LoginRequest
 import com.example.nikeshoestorecomposenew.data.model.request.SignUpRequest
@@ -13,6 +15,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -25,6 +29,12 @@ interface ApiService {
 
     @POST("auth/token")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
+
+    @GET("http://expertdevelopers.ir/api/v1/banner/slider")
+    suspend fun fetchBanners(@Header("Authorization") token: String): Response<List<BannerResponse>>
+
+    @GET("http://expertdevelopers.ir/api/v1/product/list?sort=4")
+    suspend fun fetchNewestShoes(@Header("Authorization") token: String): Response<List<ShoeResponse>>
 }
 
 fun createMoshi(): Moshi {

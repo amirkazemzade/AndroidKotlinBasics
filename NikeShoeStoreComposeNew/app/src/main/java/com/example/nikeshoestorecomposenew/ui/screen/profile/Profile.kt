@@ -22,26 +22,27 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.nikeshoestorecomposenew.R
+import com.example.nikeshoestorecomposenew.data.service.DataStoreService
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(
-    navController: NavHostController = rememberNavController(),
-) {
+fun Profile() {
+    val context = LocalContext.current
+    val email = DataStoreService(context).getUserEmail.collectAsState(initial = "")
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -79,7 +80,7 @@ fun Profile(
                     modifier = Modifier.width(16.dp)
                 )
                 Text(
-                    "user@gamil.com",
+                    email.value,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )

@@ -12,4 +12,10 @@
     <string name="favoriet_list">لیست علاقه مندی ها</string>
     <string name="order_history">سوابق سفارش</string>
     <string name="log_out">خروج از حساب کاربری</string>
+    <string name="home">خانه</string>
+    <string name="cart">سبد خرید</string>
+    <string name="search">جستجو</string>
+    <string name="newest">جدیدترین ها</string>
+    <string name="more">بیشتر</string>
+    <string name="tooman">تومان</string>
 </resources>

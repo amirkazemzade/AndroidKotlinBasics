@@ -66,13 +66,19 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha01'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+    // Data Store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.3.0")
 
     // Test
     testImplementation 'junit:junit:4.13.2'
