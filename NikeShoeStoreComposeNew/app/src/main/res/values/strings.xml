@@ -13,7 +13,8 @@
     <string name="log_out">Log Out</string>
     <string name="home">Home</string>
     <string name="cart">Cart</string>
-    <string name="search">search</string>
+    <string name="search">Search</string>
     <string name="newest">Newest</string>
     <string name="more">more</string>
+    <string name="tooman">Tooman</string>
 </resources>

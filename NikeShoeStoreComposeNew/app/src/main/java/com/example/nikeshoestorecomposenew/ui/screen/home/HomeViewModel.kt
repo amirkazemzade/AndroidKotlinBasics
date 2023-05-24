@@ -19,46 +19,44 @@ class HomeViewModel : ViewModel() {
     private var _bannerState = mutableStateOf<BannerState>(BannerState.Initial)
     val bannerState: State<BannerState> = _bannerState
 
-    private var _shoesListState = mutableStateOf<ShoesListState>(ShoesListState.Initial)
-    val shoesListState: State<ShoesListState> = _shoesListState
+    private var _newestShoesState = mutableStateOf<ShoeState>(ShoeState.Initial)
+    val newestShoesState: State<ShoeState> = _newestShoesState
 
-    fun getBanners(context: Context) {
+    fun fetchBanners(context: Context) {
         viewModelScope.launch {
-            _bannerState.value = BannerState.Loading
             val dataStoreService = DataStoreService(context)
-            dataStoreService.getUserToken.onEach { token ->
-                if (token.isNotBlank()) {
-                    val response = _apiService.getBanners("Bearer $token")
-                    if (response.isSuccessful) {
-                        _bannerState.value = BannerState.Success(response.body()!!)
-                    } else {
-                        val moshi = createMoshi()
-                        val adapter = moshi.adapter(ErrorResponse::class.java)
-                        val errorResponse = adapter.fromJson(response.errorBody()!!.string())
-                        _bannerState.value = BannerState.Error(errorResponse!!.message)
-                    }
-                    return@onEach
+            val tokenFlow = dataStoreService.getUserToken
+            tokenFlow.onEach { token ->
+                if (token.isEmpty()) return@onEach
+                _bannerState.value = BannerState.Loading
+                val response = _apiService.fetchBanners(token)
+                if (response.isSuccessful) {
+                    _bannerState.value = BannerState.Success(banners = response.body()!!)
+                } else {
+                    val moshi = createMoshi()
+                    val adapter = moshi.adapter(ErrorResponse::class.java)
+                    val errorResponse = adapter.fromJson(response.errorBody()!!.string())
+                    _bannerState.value = BannerState.Error(errorResponse!!.message)
                 }
             }.collect()
         }
     }
 
-    fun getNewestShoes(context: Context) {
+    fun fetchNewestShoes(context: Context) {
         viewModelScope.launch {
-            _shoesListState.value = ShoesListState.Loading
             val dataStoreService = DataStoreService(context)
-            dataStoreService.getUserToken.onEach { token ->
-                if (token.isNotBlank()) {
-                    val response = _apiService.getNewestShoes("Bearer $token")
-                    if (response.isSuccessful) {
-                        _shoesListState.value = ShoesListState.Success(response.body()!!)
-                    } else {
-                        val moshi = createMoshi()
-                        val adapter = moshi.adapter(ErrorResponse::class.java)
-                        val errorResponse = adapter.fromJson(response.errorBody()!!.string())
-                        _shoesListState.value = ShoesListState.Error(errorResponse!!.message)
-                    }
-                    return@onEach
+            val tokenFlow = dataStoreService.getUserToken
+            tokenFlow.onEach { token ->
+                if (token.isEmpty()) return@onEach
+                _newestShoesState.value = ShoeState.Loading
+                val response = _apiService.fetchNewestShoes(token)
+                if (response.isSuccessful) {
+                    _newestShoesState.value = ShoeState.Success(shoes = response.body()!!)
+                } else {
+                    val moshi = createMoshi()
+                    val adapter = moshi.adapter(ErrorResponse::class.java)
+                    val errorResponse = adapter.fromJson(response.errorBody()!!.string())
+                    _newestShoesState.value = ShoeState.Error(errorResponse!!.message)
                 }
             }.collect()
         }

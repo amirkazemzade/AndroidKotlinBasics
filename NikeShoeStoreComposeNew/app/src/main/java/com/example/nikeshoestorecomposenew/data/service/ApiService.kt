@@ -2,9 +2,9 @@ package com.example.nikeshoestorecomposenew.data.service
 
 import android.annotation.SuppressLint
 import com.example.nikeshoestorecomposenew.BASE_URL
-import com.example.nikeshoestorecomposenew.data.model.reponse.BannerResponseItem
+import com.example.nikeshoestorecomposenew.data.model.reponse.BannerResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.LoginResponse
-import com.example.nikeshoestorecomposenew.data.model.reponse.ShoeResponseItem
+import com.example.nikeshoestorecomposenew.data.model.reponse.ShoeResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.SignUpResponse
 import com.example.nikeshoestorecomposenew.data.model.request.LoginRequest
 import com.example.nikeshoestorecomposenew.data.model.request.SignUpRequest
@@ -30,11 +30,11 @@ interface ApiService {
     @POST("auth/token")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
 
-    @GET("banner/slider")
-    suspend fun getBanners(@Header("Authorization") token: String): Response<List<BannerResponseItem>>
+    @GET("http://expertdevelopers.ir/api/v1/banner/slider")
+    suspend fun fetchBanners(@Header("Authorization") token: String): Response<List<BannerResponse>>
 
-    @GET("product/list?sort=4")
-    suspend fun getNewestShoes(@Header("Authorization") token: String): Response<List<ShoeResponseItem>>
+    @GET("http://expertdevelopers.ir/api/v1/product/list?sort=4")
+    suspend fun fetchNewestShoes(@Header("Authorization") token: String): Response<List<ShoeResponse>>
 }
 
 fun createMoshi(): Moshi {

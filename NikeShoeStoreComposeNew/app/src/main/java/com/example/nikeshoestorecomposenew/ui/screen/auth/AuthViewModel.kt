@@ -65,11 +65,11 @@ class AuthViewModel : ViewModel() {
             _authState.value = AuthState.Loading
             val response = _apiService.login(LoginRequest(email.value, password.value))
             if (response.isSuccessful) {
-                val dataStoreService = DataStoreService(context)
                 val loginResponse = response.body()!!
                 _authState.value = AuthState.LoginSuccess(loginResponse)
-                dataStoreService.setUserToken(loginResponse.access_token)
+                val dataStoreService = DataStoreService(context)
                 dataStoreService.setUserEmail(email.value)
+                dataStoreService.setUserToken(loginResponse.access_token)
             } else {
                 val moshi = createMoshi()
                 val adapter = moshi.adapter(ErrorResponse::class.java)

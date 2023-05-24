@@ -34,20 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.nikeshoestorecomposenew.R
 import com.example.nikeshoestorecomposenew.data.service.DataStoreService
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(
-    navController: NavHostController = rememberNavController(),
-) {
+fun Profile() {
     val context = LocalContext.current
     val email = DataStoreService(context).getUserEmail.collectAsState(initial = "")
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(

@@ -1,6 +1,5 @@
 package com.example.nikeshoestorecomposenew.ui.screen.auth
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,7 +56,7 @@ fun Auth(
         if (authState is AuthState.Error) {
             Toast.makeText(context, authState.message, Toast.LENGTH_SHORT).show()
         } else if (authState is AuthState.LoginSuccess) {
-            navController.navigate(AppDestinations.main)
+            navController.navigate(AppDestinations.mainPage)
         }
     }
 
@@ -66,13 +65,15 @@ fun Auth(
             CircularProgressIndicator()
         }
     } else {
-        Body(viewModel, context)
+        Body(viewModel)
     }
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun Body(viewModel: AuthViewModel, context: Context) {
+@Composable
+private fun Body(viewModel: AuthViewModel) {
+    val context = LocalContext.current
+
     Scaffold {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,11 +96,9 @@ private fun Body(viewModel: AuthViewModel, context: Context) {
             PasswordTextField(viewModel)
             Box(modifier = Modifier.height(40.dp))
             Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
+                modifier = Modifier.fillMaxWidth(), onClick = {
                     viewModel.auth(context)
-                },
-                shape = RoundedCornerShape(16.dp),
+                }, shape = RoundedCornerShape(16.dp)
             ) {
                 Text(text = actionText(viewModel.authType.value))
             }
