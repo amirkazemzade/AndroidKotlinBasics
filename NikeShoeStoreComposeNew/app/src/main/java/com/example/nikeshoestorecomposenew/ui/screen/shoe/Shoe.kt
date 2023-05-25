@@ -30,12 +30,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.nikeshoestorecomposenew.R
+import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,8 +68,6 @@ fun Shoe(
             }
         })
     }) {
-        val shoeImage =
-            "https://s3.ir-thr-at1.arvanstorage.com/nike/zoomx-vaporfly-next-running-shoe-T5qg9m.jpg"
         val sizes = listOf(37, 38, 39, 40, 41, 42)
         val colors = listOf(
             Color(0xFF60b0fd),
@@ -93,7 +93,7 @@ fun Shoe(
             )
             Box(modifier = Modifier.height(16.dp))
             AsyncImage(
-                model = shoeImage,
+                model = image,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(horizontal = 46.dp)
@@ -197,19 +197,31 @@ fun Shoe(
         }
     }
 }
-//
-//@Preview
-//@Composable
-//fun Default() {
-//    NikeShoeStoreComposeNewTheme {
-//        Shoe()
-//    }
-//}
-//
-//@Preview(locale = "fa")
-//@Composable
-//fun DefaultFa() {
-//    NikeShoeStoreComposeNewTheme {
-//        Shoe()
-//    }
-//}
+
+@Preview
+@Composable
+fun Default() {
+    NikeShoeStoreComposeNewTheme {
+        Shoe(
+            id = 9,
+            title = "کفش ورزشی مردانه مدل ZoomX",
+            image = "https://s3.ir-thr-at1.arvanstorage.com/nike/zoomx-vaporfly-next-running-shoe-T5qg9m.jpg",
+            price = 1873000,
+            previous_price = 1973000,
+        )
+    }
+}
+
+@Preview(locale = "fa")
+@Composable
+fun DefaultFa() {
+    NikeShoeStoreComposeNewTheme {
+        Shoe(
+            id = 9,
+            title = "کفش ورزشی مردانه مدل ZoomX",
+            image = "https://s3.ir-thr-at1.arvanstorage.com/nike/zoomx-vaporfly-next-running-shoe-T5qg9m.jpg",
+            price = 1873000,
+            previous_price = 1973000,
+        )
+    }
+}
