@@ -18,4 +18,6 @@
     <string name="newest">جدیدترین ها</string>
     <string name="more">بیشتر</string>
     <string name="tooman">تومان</string>
+    <string name="size">اندازه</string>
+    <string name="color">رنگ</string>
 </resources>
