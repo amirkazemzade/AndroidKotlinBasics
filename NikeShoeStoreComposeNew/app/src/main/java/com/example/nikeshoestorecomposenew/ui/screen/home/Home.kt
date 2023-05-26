@@ -3,6 +3,7 @@ package com.example.nikeshoestorecomposenew.ui.screen.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,12 +48,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.nikeshoestorecomposenew.R
+import com.example.nikeshoestorecomposenew.ui.navigation.AppDestinations
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @Composable
-fun Home(viewModel: HomeViewModel = viewModel()) {
+fun Home(
+    viewModel: HomeViewModel = viewModel(),
+    navController: NavHostController = rememberNavController(),
+) {
     val query = remember {
         mutableStateOf("")
     }
@@ -73,15 +80,15 @@ fun Home(viewModel: HomeViewModel = viewModel()) {
         Slider(viewModel)
         Box(modifier = Modifier.height(20.dp))
         NewestShoesHeader()
-        NewestShoes(viewModel = viewModel)
+        NewestShoes(viewModel = viewModel, navController = navController)
         // TODO: show favorite shoes here instead of newest shoes
         NewestShoesHeader()
-        NewestShoes(viewModel = viewModel)
+        NewestShoes(viewModel = viewModel, navController = navController)
     }
 }
 
 @Composable
-private fun NewestShoes(viewModel: HomeViewModel) {
+private fun NewestShoes(viewModel: HomeViewModel, navController: NavHostController) {
     val context = LocalContext.current
     val shoeState = viewModel.newestShoesState.value
     if (shoeState is ShoeState.Initial) {
@@ -105,13 +112,20 @@ private fun NewestShoes(viewModel: HomeViewModel) {
                             .clip(RoundedCornerShape(20.dp))
                             .width(130.dp)
                             .height(130.dp)
-                            .background(MaterialTheme.colorScheme.surface),
+                            .background(MaterialTheme.colorScheme.surface)
+                            .clickable {
+                                navController.navigate(
+                                    "${AppDestinations.shoe}/?${shoe.id}?${shoe.title}" +
+                                            "?${shoe.image}?${shoe.price}?${shoe.previous_price}"
+                                )
+                            },
                         contentAlignment = Alignment.TopEnd,
                     ) {
 
                         AsyncImage(
                             model = shoe.image,
                             contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
                         )
                         IconButton(
                             onClick = {

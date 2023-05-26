@@ -18,4 +18,8 @@
     <string name="newest">جدیدترین ها</string>
     <string name="more">بیشتر</string>
     <string name="tooman">تومان</string>
+    <string name="size">اندازه</string>
+    <string name="color">رنگ</string>
+    <string name="comments">دیدگاه ها</string>
+    <string name="add_to_cart">افزودن به سبد خرید</string>
 </resources>

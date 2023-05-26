@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.nikeshoestorecomposenew.R
 import com.example.nikeshoestorecomposenew.ui.navigation.AppDestinations
 import com.example.nikeshoestorecomposenew.ui.screen.cart.Cart
@@ -22,7 +24,9 @@ import com.example.nikeshoestorecomposenew.ui.screen.profile.Profile
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @Composable
-fun MainPage() {
+fun MainPage(
+    navController: NavHostController = rememberNavController(),
+) {
     val currentScreen = remember {
         mutableStateOf(AppDestinations.home)
     }
@@ -80,7 +84,10 @@ fun MainPage() {
     ) {
         Box(modifier = Modifier.padding(it)) {
             when (currentScreen.value) {
-                AppDestinations.home -> Home()
+                AppDestinations.home -> Home(
+                    navController = navController,
+                )
+
                 AppDestinations.cart -> Cart()
                 AppDestinations.profile -> Profile()
             }
