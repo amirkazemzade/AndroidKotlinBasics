@@ -21,4 +21,5 @@
     <string name="color">Color</string>
     <string name="comments">Comments</string>
     <string name="add_to_cart">Add To Cart</string>
+    <string name="add_to_cart_success_message">Added to your successfuly</string>
 </resources>

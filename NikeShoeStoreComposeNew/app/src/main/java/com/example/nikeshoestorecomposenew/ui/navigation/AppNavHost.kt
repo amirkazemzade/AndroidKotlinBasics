@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.nikeshoestorecomposenew.ui.screen.auth.Auth
+import com.example.nikeshoestorecomposenew.ui.screen.comments.Comments
 import com.example.nikeshoestorecomposenew.ui.screen.main_page.MainPage
 import com.example.nikeshoestorecomposenew.ui.screen.profile.Profile
 import com.example.nikeshoestorecomposenew.ui.screen.shoe.Shoe
@@ -50,6 +51,19 @@ fun AppNavHost(navHostController: NavHostController) {
                 navController = navHostController,
             )
         }
+        composable(
+            "${AppDestinations.comments}/?{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            Comments(
+                id = it.arguments!!.getInt("id"),
+                navController = navHostController
+            )
+        }
     }
 }
 
@@ -61,5 +75,6 @@ class AppDestinations {
         const val cart = "cart"
         const val mainPage = "mainPage"
         const val shoe = "shoe"
+        const val comments = "comments"
     }
 }

@@ -1,5 +1,6 @@
 package com.example.nikeshoestorecomposenew.ui.screen.shoe
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,20 +18,24 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,10 +44,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.nikeshoestorecomposenew.R
+import com.example.nikeshoestorecomposenew.data.model.reponse.CommentResponse
+import com.example.nikeshoestorecomposenew.ui.navigation.AppDestinations
+import com.example.nikeshoestorecomposenew.ui.states.CommentsState
 import com.example.nikeshoestorecomposenew.ui.theme.NikeShoeStoreComposeNewTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +63,7 @@ fun Shoe(
     price: Int,
     previousPrice: Int,
     navController: NavHostController = rememberNavController(),
+    viewModel: ShoeViewModel = viewModel(),
 ) {
     Scaffold(
         topBar = {
@@ -76,6 +86,22 @@ fun Shoe(
             })
         },
         bottomBar = {
+            val context = LocalContext.current
+            val addToCartState = viewModel.addToCartState.value
+            val addToCartSuccessMessage = stringResource(id = R.string.add_to_cart_success_message)
+
+            LaunchedEffect(addToCartState) {
+                if (addToCartState is AddToCartState.Success) {
+                    Toast.makeText(
+                        context, addToCartSuccessMessage, Toast.LENGTH_SHORT
+                    ).show()
+                } else if (addToCartState is AddToCartState.Error) {
+                    Toast.makeText(
+                        context, addToCartState.message, Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
             Row(
                 modifier = Modifier
                     .padding(horizontal = 24.dp, vertical = 12.dp)
@@ -83,21 +109,29 @@ fun Shoe(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
-                    shape = RoundedCornerShape(15.dp)
+                    onClick = {
+                        viewModel.addToCart(id, context)
+                    }, shape = RoundedCornerShape(15.dp)
                 ) {
-                    Text(text = stringResource(id = R.string.add_to_cart))
+                    if (addToCartState == AddToCartState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(text = stringResource(id = R.string.add_to_cart))
+                    }
                 }
-                Column(
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        text = "$previousPrice ${stringResource(id = R.string.tooman)}",
-                        fontSize = 12.sp,
-                        textDecoration = TextDecoration.LineThrough
-                    )
-                    Text(text = "$price ${stringResource(id = R.string.tooman)}", fontSize = 15.sp)
-                }
+            }
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "$previousPrice ${stringResource(id = R.string.tooman)}",
+                    fontSize = 12.sp,
+                    textDecoration = TextDecoration.LineThrough
+                )
+                Text(text = "$price ${stringResource(id = R.string.tooman)}", fontSize = 15.sp)
             }
         }
     ) {
@@ -222,12 +256,11 @@ fun Shoe(
                             .size(40.dp)
                             .background(color)
                             .then(
-                                if (isSelected)
-                                    Modifier.border(
-                                        width = 1.dp,
-                                        MaterialTheme.colorScheme.onSurface,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
+                                if (isSelected) Modifier.border(
+                                    width = 1.dp,
+                                    MaterialTheme.colorScheme.onSurface,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
                                 else Modifier
                             )
                             .clickable {
@@ -237,64 +270,87 @@ fun Shoe(
                 }
             }
             Box(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 32.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.comments),
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                )
-                Text(
-                    text = stringResource(id = R.string.more),
-                    fontWeight = FontWeight.Light,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            Box(modifier = Modifier.height(8.dp))
-            val commentTitle = "خیلی شیک و اسپرت"
-            val date = "1398.29.14, 01:04"
-            val email = "saeedshahinit@gmail.com"
-            val content = "واقعا یکی از بهترین کفش هاییه که تا حالا دیدمم خیلی خوبه"
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 32.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 12.dp,
-                            topEnd = 12.dp,
-                            bottomStart = 12.dp
-                        )
-                    )
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = commentTitle, fontSize = 14.sp)
-                        Text(text = date, fontSize = 13.sp)
+            when (val commentsState = viewModel.commentsState.value) {
+                is CommentsState.Success -> {
+                    if (commentsState.comments.isNotEmpty()) {
+                        val comment = commentsState.comments.first()
+                        Comments(id, comment, navController)
                     }
-                    Box(modifier = Modifier.height(4.dp))
-                    Text(text = email, fontSize = 13.sp)
-                    Box(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = content, fontSize = 13.sp,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                }
+
+                is CommentsState.Error -> {
+                    Text(text = commentsState.message, color = MaterialTheme.colorScheme.error)
+                }
+
+                CommentsState.Loading -> {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                CommentsState.Initial -> {
+                    viewModel.fetchDocuments(id)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun Comments(productId: Int, comment: CommentResponse, navController: NavHostController) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 32.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(id = R.string.comments),
+            fontWeight = FontWeight.Medium,
+            fontSize = 20.sp,
+        )
+        TextButton(onClick = {
+            navController.navigate("${AppDestinations.comments}/?$productId")
+        }) {
+            Text(
+                text = stringResource(id = R.string.more),
+                fontWeight = FontWeight.Light,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+    Box(modifier = Modifier.height(8.dp))
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 32.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 12.dp, topEnd = 12.dp, bottomStart = 12.dp
+                )
+            )
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.primaryContainer
+            )
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = comment.title, fontSize = 14.sp)
+                Text(text = comment.date, fontSize = 13.sp)
+            }
+            Box(modifier = Modifier.height(4.dp))
+            Text(text = comment.author.email, fontSize = 13.sp)
+            Box(modifier = Modifier.height(8.dp))
+            Text(
+                text = comment.content, fontSize = 13.sp,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

@@ -2,10 +2,13 @@ package com.example.nikeshoestorecomposenew.data.service
 
 import android.annotation.SuppressLint
 import com.example.nikeshoestorecomposenew.BASE_URL
+import com.example.nikeshoestorecomposenew.data.model.reponse.AddToCartResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.BannerResponse
+import com.example.nikeshoestorecomposenew.data.model.reponse.CommentResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.LoginResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.ShoeResponse
 import com.example.nikeshoestorecomposenew.data.model.reponse.SignUpResponse
+import com.example.nikeshoestorecomposenew.data.model.request.AddToCartRequest
 import com.example.nikeshoestorecomposenew.data.model.request.LoginRequest
 import com.example.nikeshoestorecomposenew.data.model.request.SignUpRequest
 import com.squareup.moshi.Moshi
@@ -18,6 +21,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
@@ -30,11 +34,20 @@ interface ApiService {
     @POST("auth/token")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
 
-    @GET("http://expertdevelopers.ir/api/v1/banner/slider")
+    @GET("banner/slider")
     suspend fun fetchBanners(@Header("Authorization") token: String): Response<List<BannerResponse>>
 
-    @GET("http://expertdevelopers.ir/api/v1/product/list?sort=4")
+    @GET("product/list?sort=4")
     suspend fun fetchNewestShoes(@Header("Authorization") token: String): Response<List<ShoeResponse>>
+
+    @GET("comment/list")
+    suspend fun fetchComments(@Query("product_id") productId: Int): Response<List<CommentResponse>>
+
+    @POST("cart/add")
+    suspend fun addToCart(
+        @Header("Authorization") token: String,
+        @Body body: AddToCartRequest,
+    ): Response<AddToCartResponse>
 }
 
 fun createMoshi(): Moshi {
